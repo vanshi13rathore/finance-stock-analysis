@@ -1,4 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
 venv/
-.ipynb_checkpoints/
-.DS_Store
+.env
 
+# Jupyter
+.ipynb_checkpoints/
+
+# Data cache (large, reproducible via Yahoo Finance)
+data/bank_prices.csv
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/

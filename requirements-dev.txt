@@ -1,0 +1,4 @@
+# Development extras: tests + interactive dashboard
+-r requirements.txt
+pytest>=7.0
+streamlit>=1.35
