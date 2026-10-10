@@ -57,8 +57,11 @@ finance-stock-analysis/
 │   └── test_metrics.py        # 23 unit tests (no network needed)
 ├── data/                      # summary.csv, correlation.csv (price cache is git-ignored)
 ├── images/                    # Generated charts
+├── docs/                      # Full documentation (guides + references)
 ├── requirements.txt           # Core deps
-└── requirements-dev.txt       # + pytest, streamlit
+├── requirements-dev.txt       # + pytest, streamlit
+├── CONTRIBUTING.md            # Contribution guidelines
+└── CHANGELOG.md               # Version history
 ```
 
 ---
@@ -137,6 +140,24 @@ Annualization assumes 252 trading days; default risk-free rate is 2%.
 > (`python scripts/run_analysis.py --synthetic`) so they are identical on every machine.
 > Run the notebook or CLI with internet access to regenerate them from live Yahoo data —
 > the headline patterns above hold in both.
+
+---
+
+## 📚 Documentation
+
+Full guides live in [`docs/`](docs/README.md):
+
+- [Getting Started](docs/getting-started.md) — install & first run in 5 minutes
+- [User Guide](docs/user-guide.md) — notebook, dashboard, and `src/` as a library
+- [CLI Reference](docs/cli-reference.md) — every pipeline option + outputs
+- [Methodology](docs/methodology.md) — formulas, assumptions, limitations
+- [Data](docs/data.md) — sources, caching, schemas, synthetic fallback
+- [API Reference](docs/api-reference.md) — every public `src/` function
+- [Architecture](docs/architecture.md) — structure + data-flow diagram
+- [Findings](docs/findings.md) — results and how to reproduce them
+- [Troubleshooting](docs/troubleshooting.md) — FAQ and fixes
+
+Also see [CONTRIBUTING](CONTRIBUTING.md) and [CHANGELOG](CHANGELOG.md).
 
 ---
 
