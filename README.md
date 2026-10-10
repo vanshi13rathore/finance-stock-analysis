@@ -1,183 +1,196 @@
 # 📈 Finance Stock Analysis using Python
 
-## 📌 Project Overview
+Analyzing historical stock performance of **six major U.S. banks (2006–2016)** — returns, risk,
+correlations, trends, and portfolios — with clean, tested, reusable Python code.
 
-This project analyzes the historical stock performance of six major U.S. banks between **2006 and 2016** using Python. The goal is to understand stock behavior, measure risk, identify trends, and visualize financial data using popular data analysis libraries.
-
----
-
-## 🎯 Problem Statement
-
-Financial markets generate huge amounts of data every day. It is difficult to manually analyze stock prices and identify patterns.
-
-This project solves that problem by:
-
-* Collecting historical stock data
-* Measuring daily returns
-* Comparing stock performance
-* Analyzing risk and volatility
-* Finding relationships between different bank stocks
-* Visualizing trends through charts and graphs
+| Bank | Ticker | Bank | Ticker |
+|------|--------|------|--------|
+| Bank of America | BAC | JPMorgan Chase | JPM |
+| Citigroup | C | Morgan Stanley | MS |
+| Goldman Sachs | GS | Wells Fargo | WFC |
 
 ---
 
-## 🏦 Banks Analyzed
+## 🎯 What this project does
 
-* Citigroup (C)
-* Bank of America (BAC)
-* Morgan Stanley (MS)
-* Goldman Sachs (GS)
-* Wells Fargo (WFC)
-* JPMorgan Chase (JPM)
-
----
-
-## 🛠 Technologies Used
-
-* Python
-* Pandas
-* NumPy
-* Matplotlib
-* Seaborn
-* yFinance
-* Jupyter Notebook
-* Git
-* GitHub
+- Collects 10 years of historical prices via **yFinance** (with CSV caching + offline fallback)
+- Computes **daily / cumulative / normalized returns**
+- Measures risk four ways: **volatility, Sharpe/Sortino ratios, max drawdown, VaR**
+- Finds relationships via **correlation analysis**
+- Visualizes trends: price history, heatmaps, distributions, moving averages, rolling volatility, drawdowns, risk-vs-return, Monte Carlo efficient frontier
+- Ships three ways to run it: **Jupyter notebook, CLI pipeline, Streamlit dashboard**
 
 ---
 
-## 📊 Project Workflow
+## ✨ What's improved in v2.0
 
-### 1. Data Collection
+The original project was a single exploration notebook. It is now a structured mini-project:
 
-Downloaded historical stock data using the **yFinance** library.
-
-### 2. Data Exploration
-
-* Explored stock prices
-* Checked columns and data types
-* Selected closing prices for analysis
-
-### 3. Daily Returns Analysis
-
-Calculated the percentage change in stock prices to understand daily gains and losses.
-
-### 4. Risk Analysis
-
-Measured stock volatility using the **standard deviation** of daily returns.
-
-### 5. Correlation Analysis
-
-Identified how different bank stocks move relative to each other.
-
-### 6. Data Visualization
-
-Created several visualizations including:
-
-* Stock Price Trends
-* Correlation Heatmap
-* Histograms
-* Pairplots
-* Moving Average Charts
-* Normalized Stock Performance
-* Rolling Volatility
+| Before | After |
+|--------|-------|
+| One notebook, code only (no narrative) | Notebook with full markdown narrative + 12 sections |
+| Plot styling applied at the very end | Consistent global style applied first, shared by all charts |
+| Duplicated download cells, brittle column extraction | `src/data.py`: cache → Yahoo → synthetic fallback; handles all yfinance layouts |
+| Only std-dev as "risk" | `src/metrics.py`: Sharpe, Sortino, drawdown, VaR/CVaR, rolling vol, annualized stats |
+| Throwaway plotting code | `src/plots.py`: 10 reusable chart functions, crisis shading, saved to `images/` |
+| No portfolio analysis | `src/portfolio.py`: Monte Carlo efficient frontier, max-Sharpe / min-vol portfolios |
+| No tests, no CLI | `pytest` suite (23 tests) + `scripts/run_analysis.py` one-command pipeline |
+| Empty `images/` placeholder | 10 generated charts + interactive **Streamlit dashboard** (`app.py`) |
 
 ---
 
-## 📈 Key Findings
-
-* Citigroup (C) showed the highest volatility among all banks.
-* Goldman Sachs (GS) appeared relatively more stable.
-* Bank of America (BAC) and Wells Fargo (WFC) had the strongest positive correlation.
-* Market volatility increased significantly during the **2008 Financial Crisis**.
-
----
-
-## 📁 Project Structure
+## 📁 Project structure
 
 ```text
-Finance_Project/
-│
-├── finance_project.ipynb
-├── README.md
-├── requirements.txt
-├── .gitignore
-└── images/
+finance-stock-analysis/
+├── finance_project.ipynb      # Main analysis notebook (narrative + charts)
+├── app.py                     # Interactive Streamlit dashboard
+├── src/
+│   ├── config.py              # Tickers, dates, parameters, paths (single source of truth)
+│   ├── data.py                # Download / cache / clean / synthetic fallback
+│   ├── metrics.py             # Returns, volatility, Sharpe, drawdown, VaR, correlations
+│   ├── plots.py               # All chart functions (one style, reusable)
+│   └── portfolio.py           # Monte Carlo portfolios & efficient frontier
+├── scripts/
+│   └── run_analysis.py        # Headless end-to-end pipeline (charts + CSVs + findings)
+├── tests/
+│   └── test_metrics.py        # 23 unit tests (no network needed)
+├── data/                      # summary.csv, correlation.csv (price cache is git-ignored)
+├── images/                    # Generated charts
+├── requirements.txt           # Core deps
+└── requirements-dev.txt       # + pytest, streamlit
 ```
 
 ---
 
-## 🚀 How to Run
+## 🚀 How to run
 
-### Clone the repository
+### 1. Setup
 
 ```bash
 git clone https://github.com/vanshi13rathore/finance-stock-analysis.git
-```
-
-### Go to the project folder
-
-```bash
 cd finance-stock-analysis
-```
-
-### Install dependencies
-
-```bash
 pip install -r requirements.txt
 ```
 
-### Open the notebook
+### 2a. Jupyter notebook (start here)
 
 ```bash
-jupyter notebook
+jupyter notebook finance_project.ipynb
+```
+
+Run all cells top to bottom. It loads live Yahoo data when online, otherwise uses a
+reproducible synthetic dataset — and always tells you which source was used.
+
+### 2b. CLI pipeline (reproduce everything headless)
+
+```bash
+# Live data → charts in images/, CSVs in data/, findings in terminal
+python scripts/run_analysis.py
+
+# Fully offline demo with synthetic data
+python scripts/run_analysis.py --synthetic --no-cache
+```
+
+### 2c. Interactive dashboard
+
+```bash
+pip install -r requirements-dev.txt
+streamlit run app.py
+```
+
+Explore prices, risk, correlations, and portfolios with ticker/date/risk-free controls.
+
+### 2d. Tests
+
+```bash
+pytest tests/ -q   # 23 passed, no network required
 ```
 
 ---
 
-## 📷 Sample Visualizations
+## 📊 Methodology cheat-sheet
 
-*(Add screenshots of your graphs here after saving them in the `images` folder.)*
+| Metric | Formula |
+|--------|---------|
+| Daily return | `P_t / P_{t-1} − 1` |
+| Annualized volatility | `std(daily) × √252` |
+| Sharpe ratio | `(ann_return − r_f) / ann_vol` |
+| Sortino ratio | same, but only downside volatility in the denominator |
+| Max drawdown | `min((P − running_max) / running_max)` |
+| VaR 95% (daily) | 5th percentile of daily returns |
+| Growth of $1 | `cumprod(1 + daily_returns)` |
 
-* Correlation Heatmap
-* Stock Price Trends
-* Moving Average Analysis
-* Rolling Volatility
-
----
-
-## 🎓 Learning Outcomes
-
-Through this project, I learned how to:
-
-* Work with real-world financial datasets
-* Perform exploratory data analysis (EDA)
-* Calculate daily stock returns
-* Measure stock risk using volatility
-* Analyze correlations between stocks
-* Create professional financial visualizations
-* Use Git and GitHub for version control
+Annualization assumes 252 trading days; default risk-free rate is 2%.
 
 ---
 
-## 🔮 Future Improvements
+## 📈 Key findings (live Yahoo Finance data, 2006–2016)
 
-* Portfolio Optimization
-* Sharpe Ratio Analysis
-* Machine Learning-Based Stock Prediction
-* Interactive Dashboard using Streamlit
-* Real-Time Stock Data Analysis
+- **Citigroup (C)** showed the **highest volatility** — the crisis hit it hardest.
+- **Goldman Sachs (GS)** was relatively the **most stable** (lowest volatility).
+- **Bank of America (BAC)** and **Wells Fargo (WFC)** had the **strongest positive correlation**.
+- Market **volatility spiked dramatically during the 2008–2009 financial crisis** (visible in every rolling-volatility and drawdown chart).
+- Bank stocks are strongly correlated with each other (~0.6–0.9), so diversification *within* the sector is limited — the efficient-frontier demo quantifies this.
+
+> The charts below were rendered from the reproducible offline demo dataset
+> (`python scripts/run_analysis.py --synthetic`) so they are identical on every machine.
+> Run the notebook or CLI with internet access to regenerate them from live Yahoo data —
+> the headline patterns above hold in both.
+
+---
+
+## 📷 Sample visualizations
+
+### Risk vs. return (bubble size ∝ Sharpe ratio)
+
+![Risk vs return](images/risk_return.png)
+
+### Correlation heatmap
+
+![Correlation heatmap](images/correlation_heatmap.png)
+
+### 30-day rolling volatility (annualized)
+
+![Rolling volatility](images/rolling_volatility.png)
+
+### Drawdown from peak
+
+![Drawdown](images/drawdown.png)
+
+### Monte Carlo efficient frontier
+
+![Efficient frontier](images/efficient_frontier.png)
+
+### BAC with 30/50-day moving averages
+
+![BAC moving averages](images/bac_moving_averages.png)
+
+---
+
+## 🎓 Learning outcomes
+
+- Working with real-world financial data (and handling API quirks / offline mode)
+- Exploratory data analysis with pandas + seaborn
+- Return, risk, and risk-adjusted performance metrics
+- Correlation analysis and portfolio intuition (efficient frontier)
+- Structuring analysis code into testable modules
+- Reproducible pipelines (CLI + pinned deps + tests) and interactive dashboards
+
+## 🔮 Future improvements
+
+- [ ] CAPM beta vs. S&P 500 benchmark
+- [ ] Constrained portfolio optimization (scipy) with target return / max weight
+- [ ] Regime detection (bull / bear / crisis clustering)
+- [ ] ML-based forecasting (ARIMA / gradient boosting / LSTM)
+- [ ] Dividend- and split-adjusted total-return analysis
 
 ---
 
 ## 👩‍💻 Author
 
-**Vanshika Rathore**
-
-B.Tech Computer Science Engineering (AI & ML)
+**Vanshika Rathore** — B.Tech Computer Science Engineering (AI & ML)
 
 GitHub: https://github.com/vanshi13rathore
-
----
 
 ## ⭐ If you found this project useful, consider giving it a Star!
